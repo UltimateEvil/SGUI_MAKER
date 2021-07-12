@@ -80,12 +80,10 @@ function MAKER.serializeElementEX(ID, PARENT)
 	XYWH = "XYWH(".. XYWH.X ..",".. XYWH.Y ..",".. XYWH.W ..",".. XYWH.H ..")";
 	local anchor = MAKER.extractAnchorString(addElem,ELEM.type);
 	
-	local script = "local " .. ELEM_NAME .. " = " .. serializeTable(addElem) .. ";\n";
 	if(ELEM.type ~= TYPE_ELEMENT) then
-		script = script .. 	ELEM_NAME .. ".type = " .. MAKER.ID_TO_TYPE[ELEM.type] .. "; \n";
+		addElem["type"] = { [MAKER.UNESCAPED_VARIABLE] = MAKER.ID_TO_TYPE[ELEM.type]}
 	end;
-	
-	script = script .. ELEM_NAME .. " = " .. "getElementEX(".. parentName .."," .. anchor .."," .. XYWH .."," .. visible ..","  .. ELEM_NAME .. ");\n";
+	local script = "local " .. ELEM_NAME .. " = " .. "getElementEX(".. parentName .."," .. anchor .."," .. XYWH .."," .. visible ..","  .. MAKER.tableSerialize(addElem) .. ");\n\n";
 	
 	--TODO: others
 	if (ELEM.PROP_CHILDIDS ~= nil) then

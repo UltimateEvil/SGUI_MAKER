@@ -129,10 +129,11 @@ function MAKER.extractAnchorString(ELEM,typ);
 	return res;
 end;
 
-function MAKER.tableSerialize( tbl,key, compact, depth)
+function MAKER.tableSerialize( val, compact, depth)
+
     compact = compact or false;
     depth = depth or 0;
-	local padding = string.rep(" ", depth);
+	local padding = string.rep("  ", depth);
 	local newline = "\n"
 	
 	if(compact) then
@@ -140,28 +141,56 @@ function MAKER.tableSerialize( tbl,key, compact, depth)
 		newline = "";
 	end;
 	
-    local res = ""
 	local typ = type(val);
     if typ == "table" then
-		res = padding .. "{";
-        for k, v in pairs(val) do
-			local key = '[' ..  MAKER.tableSerialize(k,nil,compact,depth) .. ']';
-            local value = '[' ..  MAKER.tableSerialize(v,k,compact,depth) .. ']';
-            res = res .. padding .. '[' ..key.. ']='.. value .. newline ;
-        end;
-
-        res = res .. padding .. "}" .. newline;
-    elseif typ == "number" then
-        tmp = tmp .. tostring(val);
-    elseif typ == "string" then
-		if(key == MAKER.UNESCAPED_VARIABLE) then--this will need more work
-			tmp = tmp .. val;
-		else
-			tmp = tmp .. string.format("%q", val);
+		local size0 = true;
+		local size1 = false;
+		for k,v in pairs(val) do
+			if(size1) then
+				size1 = false;
+				break;
+			end;
+			size0 = false;
+			size1 = true;
 		end;
+		local res = padding .. "{";
+		if(size0) then
+			return "{}";
+		end;
+		if(size1) then
+			for k, v in pairs(val) do			
+				if(k == MAKER.UNESCAPED_VARIABLE) then
+					return v;
+				end;
+			end;
+		else
+			res = res.. newline ;
+		end;
+		
+		for k, v in pairs(val) do
+			local key = '[' ..  MAKER.tableSerialize(k,compact,depth+1) .. ']';
+			local value = MAKER.tableSerialize(v,compact,depth+1);
+			res = res .. padding ..key.. '='.. value .. ",";
+			if(next(val, k) ~= nil) then
+				res = res.. newline ;
+			end;
+		end;
+		
+		res = res .. padding .. "}" 
+		return res;
+    elseif typ == "number" then
+        return tostring(val);
+    elseif typ == "string" then
+		return string.format("%q", val);
     elseif typ == "boolean" then
-        tmp = tmp .. (val and "true" or "false");
+        return (val and "true" or "false");
     end;
-
-    return tmp;
+	
 end;
+
+function MAKER.getname(ID)
+
+
+end;
+
+
