@@ -45,7 +45,7 @@ function MAKER.makeCreationScript(ID)
 	
 	script = script .."function make" .. ID .."()\n" 
 	script = script .. MAKER.serializeElementEX(ID) .. "\n";
-	script = script .. "return ELEMENT".. ID .. ";\n";
+	script = script .. "return ".. MAKER.getname(ID) .. ";\n";
 	script = script .."end;"; 
 
 	return script;
@@ -73,7 +73,7 @@ function MAKER.serializeElementEX(ID, PARENT)
 	if(PARENT ~= nil) then
 		parentName = PARENT;
 	end;
-	local ELEM_NAME = "ELEMENT"..ELEM.ID;
+	local ELEM_NAME = MAKER.getname(ELEM.ID);
 	local visible = ( (addElem.visible == nil or addElem.visible) and "true" ) or "false";
 	addElem.visible = nil;
 	local XYWH = MAKER.extractXYWH(addElem,ELEM.type);

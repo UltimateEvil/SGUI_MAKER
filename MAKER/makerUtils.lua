@@ -187,10 +187,9 @@ function MAKER.tableSerialize( val, compact, depth)
     end;
 	
 end;
-
+--to be later used to allow for naming elements
 function MAKER.getname(ID)
-
-
+	return "ELEMENT"..ID;
 end;
 
 

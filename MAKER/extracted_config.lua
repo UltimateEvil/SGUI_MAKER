@@ -82,6 +82,8 @@ subCoords = {   ["[1]"] = 0,  ["[2]"] = 0,  ["[3]"] = 0,  ["[4]"] = 0,}
 ]]
 MAKER.READONLY = {
 	["PROP_CHILDIDS"] = true,
+	["PROP_ABS_X"] = true,
+	["PROP_ABS_Y"] = true,
 }
 
 MAKER.PROP_TYPE = { 

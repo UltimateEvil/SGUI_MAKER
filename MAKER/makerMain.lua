@@ -4,6 +4,8 @@ To make it easy to use this mod ain any other mod, I shall put all the init in h
 
 
 MAKER = {};
+FUN_CALL = {};
+
 --only for debugu, but
 --classic funcks stuff up otherwise
 function dump(...)
@@ -13,11 +15,14 @@ function dump(...)
 	end;
 	return res;
 end;
+include('MAKER/makerUtils');
+include('MAKER/functonalCallbacks');
 
-include('MAKER/makerUtils')
+include('MAKER/DEV_GUI');
 
-include('MAKER/extracted_config')
-include('MAKER/scripts')
+include('MAKER/extracted_config');
+include('MAKER/scripts');
 
 --LUA_TO_DEBUGLOG(MAKER.makeCreationScript(menu.window_options));
+SGUI_ENABLE_CLICKTEST(true);
 
