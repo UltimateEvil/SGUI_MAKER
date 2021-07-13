@@ -5,10 +5,10 @@ FUN_CALL.TEXT_CALLBACK = {
 [CALLBACK_MOUSEMOVE] = "eReg:get(%id):FUN_mousemove(%x,%y)", -- function(self, x, y), Mouse X Coord, Mouse Y Coord
 [CALLBACK_MOUSEUP] = "eReg:get(%id):FUN_mouseup(%b,%x,%y)", -- function(self, button, x, y) Element ID, Button(0 = left, 1 = right), Mouse X Coord,  Mouse Y Coord
 [CALLBACK_CHECKED] = "eReg:get(%id):FUN_checked",
-[CALLBACK_MOUSEMOVEANY] = "eReg:get(%id):FUN_mousemoveany",
+[CALLBACK_MOUSEMOVEANY] = "eReg:get(%id):FUN_mousemoveany(%x,%y)", -- function(self, x, y), Mouse X Coord, Mouse Y Coord - Called when any element has mousemove (Only called on visible elements which accept mouse input)
 [CALLBACK_RESIZED] = "eReg:get(%id):FUN_resized",
 [CALLBACK_INDEXSET] = "eReg:get(%id):FUN_indexset",
-[CALLBACK_MOUSEUPANY] = "eReg:get(%id):FUN_mouseupany",
+[CALLBACK_MOUSEUPANY] = "eReg:get(%id):FUN_mouseupany(%b,%x,%y)",--%b = Button(0 = left, 1 = right), %x = Mouse X Coord, %y = Mouse Y Coord - Called when any element has mouseup (Only called on visible elements which accept mouse input)
 [CALLBACK_MOUSECLICK] = "eReg:get(%id):FUN_mouseclick(%b,%x,%y)",-- function(self, button, x, y) -- Button(0 = left, 1 = right), Mouse X Coord, Mouse Y Coord)
 [CALLBACK_KEYDOWN] = "eReg:get(%id):FUN_keydown",
 [CALLBACK_KEYUP] = "eReg:get(%id):FUN_keyup",
@@ -67,8 +67,16 @@ function FUN_CALL.registerCallback(ELEMENT,callback_type, callback_function ) --
 	if(ELEMENT[translatedCallbackName] ~= nil) then --need to concat, don't need to init
 		ELEMENT[translatedCallbackName] = FUN_CALL.concatFunct(ELEMENT[translatedCallbackName], callback_function);
 	else
+		ELEMENT[translatedCallbackName .. "cache"] = get_Callback(ELEMENT.ID,callback_type);
 		ELEMENT[translatedCallbackName] = callback_function;
-		set_Callback(ELEMENT.ID,callback_type, get_Callback(ELEMENT.ID,callback_type) .. FUN_CALL.TEXT_CALLBACK[callback_type] );
+		set_Callback(ELEMENT.ID,callback_type, ELEMENT[translatedCallbackName .. "cache"] .. FUN_CALL.TEXT_CALLBACK[callback_type] );
+	end;
+end;
+function FUN_CALL.cancelCallback(ELEMENT,callback_type) --assuems to have recieved the same element as in eReg
+	local translatedCallbackName = FUN_CALL.CallbackToProp[callback_type];
+	if(ELEMENT[translatedCallbackName] ~= nil) then 
+		ELEMENT[translatedCallbackName] = nil;
+		set_Callback(ELEMENT.ID,callback_type, ELEMENT[translatedCallbackName .. "cache"] ); --might need updating to only remove the string which is added before
 	end;
 end;
 --FUN_CALL.invloke(ID, )
