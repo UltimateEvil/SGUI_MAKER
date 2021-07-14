@@ -17,6 +17,7 @@ function dump(...)
 end;
 include('MAKER/makerUtils');
 include('MAKER/functonalCallbacks');
+include('MAKER/editTransactions');
 
 include('MAKER/DEV_GUI');
 

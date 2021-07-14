@@ -91,120 +91,121 @@ end;
 ]]--
 
 function MAKER.makeDragable(ELEM)
-		FUN_CALL.registerCallback(ELEM, CALLBACK_MOUSEDOWN, function(self, button, x, y) 
-			if(button == 0) then
-			
-				local currentXY = {X = getX(self), Y= getY(self)}
-				local lastKnownXY = {X = x + currentXY.X, Y = y + currentXY.Y};
-				local isBorder = MAKER.getBorders(ELEM, x, y);
-				local onMove = function(self, xDiff, yDiff)
-					MAKER.updateProp(self.REF_ELEM.ID, PROP_X, xDiff); --if used elsewhere, make this a functionn param
-					MAKER.updateProp(self.REF_ELEM.ID, PROP_Y, yDiff);
-					MAKER.updateProp(self.ID, PROP_X, xDiff);
-					MAKER.updateProp(self.ID, PROP_Y, yDiff);
-				end;
-				local onMoveArr = {};
-				
-				local currentWidth = getWidth(self);
-				local widthChange = function (self, xDiff, yDiff) 
-					currentWidth = currentWidth + xDiff;
-					if(currentWidth < self.border_size *2) then
-						currentWidth = self.border_size *2;
-					end;
-					setWidth(self, currentWidth);
-					setWidth(self.REF_ELEM, currentWidth - self.border_size *2);
-				end;
-				
-				if(isBorder.vertical == 1) then--move left/right side
-					onMoveArr[widthChange] = true;
-				elseif(isBorder.vertical == -1) then
-					local currentX = getX(self);
-					local refX = getX(self.REF_ELEM);
-					local maxX = currentX + currentWidth;
-					local Xchange = function (self, xDiff, yDiff) 
-						if(currentX + xDiff > maxX) then
-							xDiff = maxX - currentX ;
-						end;
-						currentX = currentX + xDiff;
-						refX = refX + xDiff;
-						setX(self, currentX);
-						setX(self.REF_ELEM, refX);
-						widthChange(self, -xDiff, yDiff);
-					end;
-					onMoveArr[Xchange] = true;
-				end;
-				
-				local currentHeight = getHeight(self);
-				local heightChange = function (self, xDiff, yDiff) 
-					currentHeight = currentHeight + yDiff;
-					if(currentHeight < self.border_size *2) then
-						currentHeight = self.border_size *2;
-					end;
-					setHeight(self, currentHeight);
-					setHeight(self.REF_ELEM, currentHeight - self.border_size *2);
-				end;
-				if(isBorder.horizontal == 1) then--move left/right side
-					onMoveArr[heightChange] = true;
-				elseif(isBorder.horizontal == -1) then
-					local currentY = getY(self);
-					local refY = getY(self.REF_ELEM);
-					local maxY = currentY + currentHeight;
-					local Ychange = function (self, xDiff, yDiff) 
-						if(currentY + yDiff > maxY) then
-							yDiff = maxY - currentY ;
-						end;
-						currentY = currentY + yDiff;
-						refY = refY + yDiff;
-						setY(self, currentY);
-						setY(self.REF_ELEM, refY);
-						heightChange(self, xDiff, -yDiff);
-					end;
-					onMoveArr[Ychange] = true;
-				end;
-				
-				if(not table.empty(onMoveArr)) then
-					onMove = function(...)
-						for k in pairs(onMoveArr) do
-							k(...);
-						end;
-					end;
-				end;
-				
-				
-				FUN_CALL.registerCallback(self, CALLBACK_MOUSEMOVEANY, function (self, x,y) 
-					local newXY = {X = getX(self) + x, Y = getY(self) + y}; --already absloute in the scope
-				
-					local xDiff = -( lastKnownXY.X-newXY.X );
-					local yDiff = -( lastKnownXY.Y-newXY.Y );
-					lastKnownXY = newXY;
-					onMove(self, xDiff, yDiff);
-				end);
-				FUN_CALL.registerCallback(self, CALLBACK_MOUSEUPANY, function(self, button, x, y) 
-					if(button == 0) then
-						FUN_CALL.cancelCallback(self,CALLBACK_MOUSEMOVEANY); --if needed update this to remove it
-						FUN_CALL.cancelCallback(self,CALLBACK_MOUSEUPANY);
-					end
-				end);
+	FUN_CALL.registerCallback(ELEM, CALLBACK_MOUSEDOWN, function(self, button, x, y) 
+		if(button == 0) then
+			MAKER.beginTransaction(ELEM.REF_ELEM);
+			local currentXY = {X = getX(self), Y= getY(self)}
+			local lastKnownXY = {X = x + currentXY.X, Y = y + currentXY.Y};
+			local isBorder = MAKER.getBorders(ELEM, x, y);
+			local onMove = function(self, xDiff, yDiff)
+				MAKER.updateProp(self.REF_ELEM.ID, PROP_X, xDiff); --if used elsewhere, make this a functionn param
+				MAKER.updateProp(self.REF_ELEM.ID, PROP_Y, yDiff);
+				MAKER.updateProp(self.ID, PROP_X, xDiff);
+				MAKER.updateProp(self.ID, PROP_Y, yDiff);
 			end;
-		end);
+			local onMoveArr = {};
+			
+			local currentWidth = getWidth(self);
+			local widthChange = function (self, xDiff, yDiff) 
+				currentWidth = currentWidth + xDiff;
+				if(currentWidth < self.border_size *2) then
+					currentWidth = self.border_size *2;
+				end;
+				setWidth(self, currentWidth);
+				setWidth(self.REF_ELEM, currentWidth - self.border_size *2);
+			end;
+			
+			if(isBorder.vertical == 1) then--move left/right side
+				onMoveArr[widthChange] = true;
+			elseif(isBorder.vertical == -1) then
+				local currentX = getX(self);
+				local refX = getX(self.REF_ELEM);
+				local maxX = currentX + currentWidth;
+				local Xchange = function (self, xDiff, yDiff) 
+					if(currentX + xDiff > maxX) then
+						xDiff = maxX - currentX ;
+					end;
+					currentX = currentX + xDiff;
+					refX = refX + xDiff;
+					setX(self, currentX);
+					setX(self.REF_ELEM, refX);
+					widthChange(self, -xDiff, yDiff);
+				end;
+				onMoveArr[Xchange] = true;
+			end;
+			
+			local currentHeight = getHeight(self);
+			local heightChange = function (self, xDiff, yDiff) 
+				currentHeight = currentHeight + yDiff;
+				if(currentHeight < self.border_size *2) then
+					currentHeight = self.border_size *2;
+				end;
+				setHeight(self, currentHeight);
+				setHeight(self.REF_ELEM, currentHeight - self.border_size *2);
+			end;
+			if(isBorder.horizontal == 1) then--move left/right side
+				onMoveArr[heightChange] = true;
+			elseif(isBorder.horizontal == -1) then
+				local currentY = getY(self);
+				local refY = getY(self.REF_ELEM);
+				local maxY = currentY + currentHeight;
+				local Ychange = function (self, xDiff, yDiff) 
+					if(currentY + yDiff > maxY) then
+						yDiff = maxY - currentY ;
+					end;
+					currentY = currentY + yDiff;
+					refY = refY + yDiff;
+					setY(self, currentY);
+					setY(self.REF_ELEM, refY);
+					heightChange(self, xDiff, -yDiff);
+				end;
+				onMoveArr[Ychange] = true;
+			end;
+			
+			if(not table.empty(onMoveArr)) then
+				onMove = function(...)
+					for k in pairs(onMoveArr) do
+						k(...);
+					end;
+				end;
+			end;
+			
+			
+			FUN_CALL.registerCallback(self, CALLBACK_MOUSEMOVEANY, function (self, x,y) 
+				local newXY = {X = getX(self) + x, Y = getY(self) + y}; --already absloute in the scope
+			
+				local xDiff = -( lastKnownXY.X-newXY.X );
+				local yDiff = -( lastKnownXY.Y-newXY.Y );
+				lastKnownXY = newXY;
+				onMove(self, xDiff, yDiff);
+			end);
+			FUN_CALL.registerCallback(self, CALLBACK_MOUSEUPANY, function(self, button, x, y) 
+				if(button == 0) then
+					MAKER.commitTransaction(ELEM.REF_ELEM);
+					FUN_CALL.cancelCallback(self,CALLBACK_MOUSEMOVEANY); --if needed update this to remove it
+					FUN_CALL.cancelCallback(self,CALLBACK_MOUSEUPANY);
+				end
+			end);
+		end;
+	end);
 end;
 
 
 function MAKER.getBorders(ELEM, x, y)
-		local currWidth = getWidth(ELEM);
-		local currHeight = getHeight(ELEM);
+	local currWidth = getWidth(ELEM);
+	local currHeight = getHeight(ELEM);
 
-		local borderWidth = 8;
-		local isBorder = {vertical = 0, horizontal = 0}
-		if(x < borderWidth) then
-			isBorder.vertical = -1;
-		elseif(x + borderWidth > currWidth ) then
-			isBorder.vertical = 1;
-		end;
-		if(y < borderWidth) then
-			isBorder.horizontal = -1;
-		elseif(y + borderWidth > currHeight ) then
-			isBorder.horizontal = 1;
-		end;
-		return isBorder;
+	local borderWidth = 8;
+	local isBorder = {vertical = 0, horizontal = 0}
+	if(x < borderWidth) then
+		isBorder.vertical = -1;
+	elseif(x + borderWidth > currWidth ) then
+		isBorder.vertical = 1;
+	end;
+	if(y < borderWidth) then
+		isBorder.horizontal = -1;
+	elseif(y + borderWidth > currHeight ) then
+		isBorder.horizontal = 1;
+	end;
+	return isBorder;
 end;

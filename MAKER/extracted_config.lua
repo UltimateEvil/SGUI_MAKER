@@ -80,6 +80,17 @@ colour = {alpha = 0, red = 0, green = 0, blue = 0}
 subCoords = {   ["[1]"] = 0,  ["[2]"] = 0,  ["[3]"] = 0,  ["[4]"] = 0,}
 
 ]]
+--too lazy to make a proper workaround
+function MAKER.set_Anchor(ID,PROP,Anchor) 
+	return set_Anchor(ID,Anchor);
+end;
+MAKER.TYPE_SAVER = {
+	["default"] = set_Property,
+	["colour"] = set_Colour,
+	["anchor"] = MAKER.set_Anchor,
+	["subCoords"] = set_SubCoords,
+}
+
 MAKER.READONLY = {
 	["PROP_CHILDIDS"] = true,
 	["PROP_ABS_X"] = true,
@@ -371,3 +382,5 @@ MAKER.AddElementTranslator = {
 	["CALLBACK_VISIBILITY"] = "callback_visibility", -- %id = Element ID, %vis = True/False if visible
 
 }
+
+
