@@ -19,11 +19,12 @@ include('MAKER/makerUtils');
 include('MAKER/functonalCallbacks');
 include('MAKER/editTransactions');
 
-include('MAKER/DEV_GUI');
 
 include('MAKER/extracted_config');
 include('MAKER/scripts');
 
+include('MAKER/selectors');
+include('MAKER/DEV_GUI');
+
 --LUA_TO_DEBUGLOG(MAKER.makeCreationScript(menu.window_options));
-SGUI_ENABLE_CLICKTEST(true);
 
