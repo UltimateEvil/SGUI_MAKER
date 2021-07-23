@@ -128,7 +128,7 @@ MAKER.PROP_TYPE = {
 
 
 ["PROP_ANCHOR"] = "anchor", --table
-["PROP_CHILDIDS"] = "nil", --table when filled. {[iterator]=>ID}, READONLY
+["PROP_CHILDIDS"] = "table", --table when filled, nil otherwise. {[iterator]=>ID}, READONLY
 
 ["PROP_SUBCOORDS"] = "subCoords", --table
 

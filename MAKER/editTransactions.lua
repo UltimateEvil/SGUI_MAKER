@@ -40,3 +40,15 @@ function MAKER.revertLastTransaction()
 	MAKER.transactionHistory[#MAKER.transactionHistory] = nil;
 	MAKER.reloadFromCache(restore);
 end;
+
+function MAKER.reloadFromCache(CACHE)
+
+	for k,v in pairs(CACHE) do
+		if(MAKER.PROP_TO_ID[k] ~= nil) then
+			saver = MAKER.TYPE_SAVER[MAKER.PROP_TYPE[k]];
+			saver = saver or MAKER.TYPE_SAVER["default"];
+			saver(ID,MAKER.PROP_TO_ID[k],v);
+		end;
+	end;
+
+end;

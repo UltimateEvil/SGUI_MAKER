@@ -22,6 +22,7 @@ include('MAKER/editTransactions');
 
 include('MAKER/extracted_config');
 include('MAKER/scripts');
+include('MAKER/dumper');
 
 include('MAKER/selectors');
 include('MAKER/DEV_GUI');
