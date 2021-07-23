@@ -1,8 +1,11 @@
 
 MAKER.ElementNameCache = {};
-
+MAKER.ElementNameCacheGlobals = false; 
 --to be later used to allow for naming elements
 function MAKER.getname(ID)
+	if(not MAKER.ElementNameCacheGlobals) then
+		MAKER.initGlobalNames();
+	end;
 	if(not MAKER.ElementNameCache[ID]) then
 		local ELEM = eReg:get(ID);
 		local parent = ELEM.parent;
@@ -24,7 +27,16 @@ function MAKER.getname(ID)
 	end;
 	return MAKER.ElementNameCache[ID];
 end;
-
+--without any additional logging, this is quite surprisingly fast.
+function MAKER.initGlobalNames()
+	for k,v in pairs(_ENV) do --walk all global varaibles
+		if(type(k) == "string" and type(v) == "table" 
+							  and type(v.ID) == "number" 
+							  and eReg:get(v.ID) == v  ) then
+			MAKER.ElementNameCache[v.ID] = k;						
+		end;
+	end;
+end;
 
 function MAKER.makeCreationScript(ID)
 	ID = MAKER.ensureID(ID)
