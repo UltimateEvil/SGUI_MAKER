@@ -1,7 +1,6 @@
 
 MAKER.UNESCAPED_VARIABLE ={};
 
-
 function MAKER.recursiveCompare(a,b) 
 	local typeA = type(a);
 	local typeB = type(b);
@@ -188,6 +187,18 @@ function MAKER.tableSerialize( val, compact, depth)
 	
 end;
 
-
+function MAKER.tableDiff(tbl1,tbl2)
+	local res = {};
+	for k,v in pairs(tbl1) do
+		if(MAKER.PROP_TYPE[k] ~= nil) then
+			if(not MAKER.recursiveCompare(tbl2[k],v)) then
+				res[k] = v;
+			end;
+		else
+			res[k] = v; --retain rest, like parent, ID and such
+		end;
+	end;
+	return res;
+end;
 
 

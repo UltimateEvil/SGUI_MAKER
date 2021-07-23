@@ -95,6 +95,10 @@ MAKER.READONLY = {
 	["PROP_CHILDIDS"] = true,
 	["PROP_ABS_X"] = true,
 	["PROP_ABS_Y"] = true,
+	["PROP_XF"] = true, --why do i put them here whn you can technically apply them? Because applying them using my stuff is not really the intended usecase
+	["PROP_YF"] = true,
+	["PROP_WF"] = true,
+	["PROP_HF"] = true,
 }
 
 MAKER.PROP_TYPE = { 

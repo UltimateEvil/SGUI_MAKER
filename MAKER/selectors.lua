@@ -15,7 +15,11 @@ function MAKER.switchSelectionContext(ID)
 	end;
 	
 	if(MAKER.selectedElem == target) then--we are trying to re-select self, assume we want to cancel
-		MAKER.endSelection();
+		if(MAKER.selectedWrapper) then--we are ending
+			MAKER.endSelection();
+		else
+			MAKER.redrawSelection() --was hidden
+		end;
 		return;
 	end;
 	

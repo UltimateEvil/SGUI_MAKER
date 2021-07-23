@@ -1,6 +1,6 @@
 
-function MAKER.createMakerElementCache(ID)
-	ID = MAKER.ensureID(ID)
+function MAKER.createMakerElementCache(ID, notrim)
+	local ID = MAKER.ensureID(ID)
 	local ELEM = {};
 	ELEM.ID = ID;
 	for k, v in pairs(MAKER.PROP_TO_ID) do
@@ -9,9 +9,9 @@ function MAKER.createMakerElementCache(ID)
 	ELEM.type = MAKER.getElemType(ID);
 	ELEM.parent = MAKER.getParent(ID);
 	ELEM.special = MAKER.getSpecial(ID);
-	
-	MAKER.trimElemDefaults(ELEM);
-	
+	if(not notrim) then
+		MAKER.trimElemDefaults(ELEM);
+	end;
 	for k, v in pairs(MAKER.CALLBACK_TO_ID) do
 		local callback = sgui_getcallback(ID,v);
 		if(callback ~= "") then

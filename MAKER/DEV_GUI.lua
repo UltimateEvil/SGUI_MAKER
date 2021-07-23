@@ -69,6 +69,31 @@ function createInteractionIcons()
 			LUA_TO_DEBUGLOG( MAKER.makeCreationScript(MAKER.selectedElem));
 		end;
 	end);
+	
+	
+	MAKER.undo = getElementEX(MAKER.iconsWrapper, anchorTL, XYWH(3,170,22,20),true,{
+		colour1 = RGB(125,125,32), 
+		shear = true
+	});
+	MAKER.undo.name = getLabelEX(MAKER.undo,anchorTL,XYWH(0,0,10,10),nil, "Un",{nomouseevent = true, font_colour = BLACK()});
+	
+	FUN_CALL.registerCallback(MAKER.undo, CALLBACK_MOUSECLICK, function(self, button, x, y)
+		if(button == 0) then
+		MAKER.revertLastTransaction()
+		end;
+	end);
+	
+	MAKER.redo = getElementEX(MAKER.iconsWrapper, anchorTL, XYWH(3,200,22,20),true,{
+		colour1 = RGB(200,200,32), 
+		shear = true
+	});
+	MAKER.redo.name = getLabelEX(MAKER.redo ,anchorTL,XYWH(0,0,10,10),nil, "Re",{nomouseevent = true, font_colour = BLACK()});
+	
+	FUN_CALL.registerCallback(MAKER.redo, CALLBACK_MOUSECLICK, function(self, button, x, y)
+		if(button == 0) then
+			MAKER.reapplyNextTransaction()
+		end;
+	end);
 end;
 
 createInteractionIcons();
